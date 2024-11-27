@@ -5,3 +5,17 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
+[project]
+name = "questionnaire"
+version = "0.1.0"
+description = "A FastAPI questionnaire service"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "jinja2>=3.1.0",
+    "python-multipart>=0.0.9"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

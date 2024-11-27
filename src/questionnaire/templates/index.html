@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Questionnaire</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            margin-top: 8px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .budget-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionnaire</h1>
+    <form id="questionForm">
+        {% for question in questions %}
+        <div class="question">
+            <label for="q{{loop.index}}">{{question}}</label>
+            <textarea id="q{{loop.index}}" name="q{{loop.index}}" required></textarea>
+        </div>
+        {% endfor %}
+        
+        <div class="budget-section">
+            <label for="budget">Budget:</label>
+            <input type="number" id="budget" name="budget" required min="0" step="1">
+            <span id="currencySymbol"></span>
+        </div>
+    </form>
+
+    <script>
+        // Get user's locale and currency
+        const locale = navigator.language;
+        const formatter = new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: new Intl.NumberFormat(locale, { style: 'currency' })
+                .format(0)
+                .replace(/[\d.,\s]/g, '')
+                .trim(),
+        });
+
+        // Set currency symbol
+        document.getElementById('currencySymbol').textContent = 
+            formatter.format(0).replace(/[\d.,\s]/g, '').trim();
+
+        // Make questions available globally
+        window.questions = {{ questions|tojson }};
+    </script>
+</body>
+</html>
