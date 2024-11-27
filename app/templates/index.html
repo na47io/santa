@@ -32,8 +32,7 @@
       {% for question in questions %}
       <div class="question">
         <label for="q{{loop.index}}">{{question}}</label>
-        <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>
-{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
+        <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
         >
       </div>
       {% endfor %}
