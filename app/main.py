@@ -60,17 +60,13 @@ async def home(request: Request):
     saved_budget = None
     
     # Try to get existing session
-    session_id = None
-    try:
-        session_id = await cookie(request)
-        if session_id:
-            session_data = await backend.read(session_id)
-            print(session_data)
-            if session_data:
-                saved_answers = session_data.answers
-                saved_budget = session_data.budget
-    except:
-        pass
+    session_id = cookie(request)
+    if session_id:
+        session_data = await backend.read(session_id)
+        print(session_data)
+        if session_data:
+            saved_answers = session_data.answers
+            saved_budget = session_data.budget
     
     # Create new session if none exists
     if not session_id:
