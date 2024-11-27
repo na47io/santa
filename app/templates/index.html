@@ -8,22 +8,29 @@
       content="A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences"
     />
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
     <div class="hero-section">
       <h1>santa</h1>
       <p class="subheading">
-        A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences
+        A thoughtful gift suggestion tool that helps you find the perfect
+        present by analyzing your relationship and shared experiences
       </p>
     </div>
     <form id="questionForm" action="/submit" method="post">
       <div class="wizard-container">
         <div class="progress-container">
-          <div class="progress-text">Question <span id="currentStep">1</span> of <span id="totalSteps">{{ questions_data|length + 1 }}</span></div>
+          <div class="progress-text">
+            Question <span id="currentStep">1</span> of
+            <span id="totalSteps">{{ questions_data|length + 1 }}</span>
+          </div>
           <div class="progress-bar" id="progress"></div>
         </div>
 
@@ -37,7 +44,9 @@
                 name="q{{loop.index}}"
                 required
                 placeholder="{{item.placeholder}}"
-              >{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
+              >
+{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
+              >
               <button
                 type="button"
                 class="clear-button"
@@ -46,7 +55,9 @@
                 ×
               </button>
             </div>
-            <div class="save-indicator" id="indicator-q{{loop.index}}">&nbsp;</div>
+            <div class="save-indicator" id="indicator-q{{loop.index}}">
+              &nbsp;
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -69,9 +80,28 @@
         </div>
 
         <div class="wizard-nav">
-          <button type="button" class="nav-button" id="prevBtn" onclick="prevStep()">Previous</button>
-          <button type="button" class="nav-button" id="nextBtn" onclick="nextStep()">Next</button>
-          <button type="submit" class="submit-button" id="submitBtn" style="display: none;">
+          <button
+            type="button"
+            class="nav-button"
+            id="prevBtn"
+            onclick="prevStep()"
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            class="nav-button"
+            id="nextBtn"
+            onclick="nextStep()"
+          >
+            Next
+          </button>
+          <button
+            type="submit"
+            class="submit-button"
+            id="submitBtn"
+            style="display: none"
+          >
             Get Gift Suggestions 🎁
           </button>
         </div>
@@ -99,17 +129,17 @@
       function showStep(step) {
         // Hide all questions
         document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
-        
+
         // Show current question
-        const stepElement = step === totalSteps 
+        const stepElement = step === totalSteps
           ? document.getElementById('stepBudget')
           : document.getElementById('step' + step);
         stepElement.classList.add('active');
-        
+
         // Update progress
         document.getElementById('currentStep').textContent = step;
         document.getElementById('progress').style.width = ((step / totalSteps) * 100) + '%';
-        
+
         // Update buttons
         document.getElementById('prevBtn').disabled = step === 1;
         const nextBtn = document.getElementById('nextBtn');
