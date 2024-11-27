@@ -65,6 +65,7 @@ async def home(request: Request):
         session_id = await cookie(request)
         if session_id:
             session_data = await backend.read(session_id)
+            print(session_data)
             if session_data:
                 saved_answers = session_data.answers
                 saved_budget = session_data.budget
@@ -126,6 +127,8 @@ async def autosave(
     
     # Create or update session
     session_data = SessionData(answers=answers, budget=budget)
+
+    print(session_data)
     
     if not session_id:
         session_id = uuid4()
