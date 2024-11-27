@@ -171,6 +171,13 @@
           currentStep++;
           showStep(currentStep);
           updateNextButtonState();
+          
+          // Focus on the new textarea/input to keep keyboard visible
+          if (currentStep === totalSteps) {
+            document.getElementById('budget').focus();
+          } else {
+            document.getElementById(`q${currentStep}`).focus();
+          }
         }
       }
 
