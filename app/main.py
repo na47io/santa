@@ -2,9 +2,21 @@ from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.sessions import SessionMiddleware
 from pathlib import Path
+import json
+from typing import Dict, Optional
+import secrets
 
 app = FastAPI()
+
+# Add session middleware
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=secrets.token_urlsafe(32),
+    session_cookie="gift_session",
+    max_age=86400  # 24 hours
+)
 
 # Mount static files
 static_path = Path(__file__).parent / "static"
@@ -48,9 +60,19 @@ questions = [
 
 @app.get("/")
 async def home(request: Request):
+    # Get existing answers from session
+    session = request.session
+    saved_answers = session.get("answers", {})
+    saved_budget = session.get("budget")
+    
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "questions": questions}
+        {
+            "request": request,
+            "questions": questions,
+            "saved_answers": saved_answers,
+            "saved_budget": saved_budget
+        }
     )
 
 def process_answers(answers: dict, budget: int) -> dict:
@@ -80,6 +102,10 @@ async def submit_answers(request: Request):
             budget = int(value)
         else:
             answers[key] = value
+    
+    # Store in session
+    request.session["answers"] = answers
+    request.session["budget"] = budget
     
     # Get suggestions and summary
     result = process_answers(answers, budget)

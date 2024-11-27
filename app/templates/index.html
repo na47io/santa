@@ -36,7 +36,7 @@
           id="q{{loop.index}}"
           name="q{{loop.index}}"
           required
-        ></textarea>
+        >{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
       </div>
       {% endfor %}
 
@@ -49,6 +49,7 @@
           required
           min="0"
           step="1"
+          value="{{ saved_budget or '' }}"
         />
         <span id="currencySymbol"></span>
       </div>
