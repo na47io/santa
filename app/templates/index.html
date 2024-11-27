@@ -150,8 +150,10 @@
         }
       }
 
-      // Initialize wizard
-      showStep(1);
+      // Initialize wizard with saved step if available
+      const savedStep = {{ saved_step }};
+      currentStep = savedStep;
+      showStep(savedStep);
 
       // Autosave functionality
       let autosaveTimeout;
@@ -181,7 +183,9 @@
 
         autosaveTimeout = setTimeout(async () => {
           const form = document.getElementById('questionForm');
-          const formData = {};
+          const formData = {
+            current_step: currentStep
+          };
 
           // Collect all form data
           for (let i = 1; i <= questions.length; i++) {

@@ -92,6 +92,7 @@ questions = [q["question"] for q in questions_data]
 async def home(request: Request):
     saved_answers = {}
     saved_budget = None
+    saved_step = 1
     
     # Try to get existing session
     session_id = cookie(request)
@@ -101,6 +102,7 @@ async def home(request: Request):
         if session_data:
             saved_answers = session_data.answers
             saved_budget = session_data.budget
+            saved_step = session_data.current_step
     
     # Create new session if none exists
     if not session_id:
@@ -115,7 +117,8 @@ async def home(request: Request):
             "request": request,
             "questions_data": questions_data,
             "saved_answers": saved_answers,
-            "saved_budget": saved_budget
+            "saved_budget": saved_budget,
+            "saved_step": saved_step
         }
     )
     cookie.attach_to_response(response, session_id)
@@ -142,9 +145,10 @@ async def autosave(
 ):
     form_data = await request.json()
     
-    # Extract answers and budget
+    # Extract answers, budget and current step
     answers = {}
     budget = None
+    current_step = 1
     
     for key, value in form_data.items():
         if key == "budget":
@@ -152,11 +156,16 @@ async def autosave(
                 budget = int(value)
             except (ValueError, TypeError):
                 pass
+        elif key == "current_step":
+            try:
+                current_step = int(value)
+            except (ValueError, TypeError):
+                pass
         else:
             answers[key] = value
     
     # Create or update session
-    session_data = SessionData(answers=answers, budget=budget)
+    session_data = SessionData(answers=answers, budget=budget, current_step=current_step)
     
     if not session_id:
         session_id = uuid4()

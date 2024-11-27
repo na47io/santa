@@ -7,6 +7,7 @@ from pydantic import BaseModel
 class SessionData(BaseModel):
     answers: dict = {}
     budget: int | None = None
+    current_step: int = 1
 
 cookie_params = CookieParameters()
 
