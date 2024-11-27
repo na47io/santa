@@ -1,22 +1,17 @@
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
-from fastapi.middleware.sessions import SessionMiddleware
 from pathlib import Path
-import json
-from typing import Dict, Optional
-import secrets
+from uuid import UUID, uuid4
+from .session import (
+    SessionData,
+    cookie,
+    backend,
+    verifier
+)
 
 app = FastAPI()
-
-# Add session middleware
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=secrets.token_urlsafe(32),
-    session_cookie="gift_session",
-    max_age=86400  # 24 hours
-)
 
 # Mount static files
 static_path = Path(__file__).parent / "static"
@@ -59,11 +54,18 @@ questions = [
 ]
 
 @app.get("/")
-async def home(request: Request):
-    # Get existing answers from session
-    session = request.session
-    saved_answers = session.get("answers", {})
-    saved_budget = session.get("budget")
+async def home(
+    request: Request,
+    session_id: UUID | None = Depends(cookie),
+):
+    saved_answers = {}
+    saved_budget = None
+    
+    if session_id:
+        session_data = await backend.read(session_id)
+        if session_data:
+            saved_answers = session_data.answers
+            saved_budget = session_data.budget
     
     return templates.TemplateResponse(
         "index.html",
@@ -90,7 +92,10 @@ def process_answers(answers: dict, budget: int) -> dict:
     }
 
 @app.post("/submit")
-async def submit_answers(request: Request):
+async def submit_answers(
+    request: Request,
+    session_id: UUID | None = Depends(cookie)
+):
     form_data = await request.form()
     
     # Extract answers and budget
@@ -103,12 +108,31 @@ async def submit_answers(request: Request):
         else:
             answers[key] = value
     
-    # Store in session
-    request.session["answers"] = answers
-    request.session["budget"] = budget
+    # Create or update session
+    session_data = SessionData(answers=answers, budget=budget)
+    if not session_id:
+        session_id = uuid4()
+    await backend.create(session_id, session_data)
+    cookie.attach_to_response(RedirectResponse(url="/results"), session_id)
     
     # Get suggestions and summary
     result = process_answers(answers, budget)
+    
+    return templates.TemplateResponse(
+        "results.html",
+        {"request": request, "summary": result["summary"], "suggestions": result["suggestions"]}
+    )
+
+@app.get("/results")
+async def view_results(
+    request: Request,
+    session_id: UUID = Depends(cookie)
+):
+    session_data = await backend.read(session_id)
+    if not session_data:
+        return RedirectResponse(url="/")
+        
+    result = process_answers(session_data.answers, session_data.budget)
     
     return templates.TemplateResponse(
         "results.html",
