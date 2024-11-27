@@ -58,11 +58,14 @@ async def home(
     request: Request,
     session_id: UUID | None = Depends(cookie),
 ):
+    print('hello world')
     saved_answers = {}
     saved_budget = None
+    print(session_id)
     
     # Create new session if one doesn't exist
     if not session_id:
+        print('aaaaa')
         session_id = uuid4()
         session_data = SessionData()
         await backend.create(session_id, session_data)
@@ -77,6 +80,7 @@ async def home(
         )
         cookie.attach_to_response(response, session_id)
         return response
+
     
     # Use existing session
     session_data = await backend.read(session_id)
