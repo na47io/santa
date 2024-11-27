@@ -10,11 +10,11 @@
   <body>
     <h1>santa</h1>
     <form id="questionForm" action="/submit" method="post">
-      {% for question in questions %}
+      {% for item in questions_data %}
       <div class="question">
-        <label for="q{{loop.index}}">{{question}}</label>
+        <label for="q{{loop.index}}">{{item.question}}</label>
         <div class="textarea-container">
-          <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
+          <textarea id="q{{loop.index}}" name="q{{loop.index}}" required placeholder="{{item.placeholder}}">{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
           <button type="button" class="clear-button" onclick="clearTextarea('q{{loop.index}}')">×</button>
         </div>
       </div>
