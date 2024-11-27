@@ -112,14 +112,34 @@
         
         // Update buttons
         document.getElementById('prevBtn').disabled = step === 1;
-        document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'block';
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.style.display = step === totalSteps ? 'none' : 'block';
+        updateNextButtonState();
         document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
       }
 
+      function validateCurrentStep() {
+        if (currentStep === totalSteps) {
+          // Budget step validation
+          const budgetInput = document.getElementById('budget');
+          return budgetInput && budgetInput.value.trim() !== '';
+        } else {
+          // Question step validation
+          const textarea = document.getElementById(`q${currentStep}`);
+          return textarea && textarea.value.trim() !== '';
+        }
+      }
+
+      function updateNextButtonState() {
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.disabled = !validateCurrentStep();
+      }
+
       function nextStep() {
-        if (currentStep < totalSteps) {
+        if (currentStep < totalSteps && validateCurrentStep()) {
           currentStep++;
           showStep(currentStep);
+          updateNextButtonState();
         }
       }
 
@@ -197,10 +217,16 @@
         }, AUTOSAVE_DELAY);
       }
 
-      // Add event listeners for autosave
+      // Add event listeners for autosave and validation
       document.querySelectorAll('textarea, input').forEach(element => {
-        element.addEventListener('input', () => autosave(element.id));
+        element.addEventListener('input', () => {
+          autosave(element.id);
+          updateNextButtonState();
+        });
       });
+
+      // Initial button state
+      updateNextButtonState();
 
       // Initial console message
       console.log('Autosave ready - will trigger on input');
