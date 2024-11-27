@@ -97,29 +97,30 @@ async def home(request: Request):
     saved_budget = None
     saved_step = 1
     
-    # Try to get existing session
+    # Try to get existing valid session
+    session_id = None
+    session_data = None
+    
     try:
-        session_id = cookie(request)
+        existing_id = cookie(request)
+        if existing_id:
+            try:
+                session_data = await backend.read(existing_id)
+                if session_data:
+                    session_id = existing_id
+                    saved_answers = session_data.answers
+                    saved_budget = session_data.budget
+                    saved_step = session_data.current_step
+            except:
+                pass
     except:
-        session_id = None
-    if session_id:
-        session_data = await backend.read(session_id)
-        if session_data:
-            saved_answers = session_data.answers
-            saved_budget = session_data.budget
-            saved_step = session_data.current_step
-        else:
-            # Create new session if we have ID but no data
-            session_data = SessionData()
-            await backend.create(session_id, session_data)
-    else:
-        # Create new session if no ID exists
+        pass
+
+    # Create new session if we don't have a valid one
+    if not session_id or not session_data:
         session_id = uuid4()
         session_data = SessionData()
         await backend.create(session_id, session_data)
-
-    print("FUUUUUUUUUU")
-    print(session_id, session_data)
     
     response = templates.TemplateResponse(
         "index.html",
