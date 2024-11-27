@@ -64,7 +64,7 @@
       document.getElementById('currencySymbol').textContent = '$';
 
       // Make questions available globally
-      window.questions = {{ questions|tojson }};
+      window.questions = {{ questions_data|tojson }};
 
       // Autosave functionality
       let autosaveTimeout;
