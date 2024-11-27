@@ -101,14 +101,16 @@ async def home(request: Request):
     session_id = cookie(request)
     if session_id:
         session_data = await backend.read(session_id)
-        print(session_data)
         if session_data:
             saved_answers = session_data.answers
             saved_budget = session_data.budget
             saved_step = session_data.current_step
-    
-    # Create new session if none exists
-    if not session_id:
+        else:
+            # Create new session if we have ID but no data
+            session_data = SessionData()
+            await backend.create(session_id, session_data)
+    else:
+        # Create new session if no ID exists
         session_id = uuid4()
         session_data = SessionData()
         await backend.create(session_id, session_data)
