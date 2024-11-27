@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, Form, Depends
+from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
@@ -138,7 +139,7 @@ async def autosave(
     # Create new session
     await backend.create(session_id, session_data)
     
-    response = {"status": "success"}
+    response = JSONResponse(content={"status": "success"})
     cookie.attach_to_response(response, session_id)
     return response
 
