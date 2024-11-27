@@ -14,10 +14,12 @@
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
-    <h1>santa</h1>
-    <p style="text-align: center; margin-bottom: 30px; font-size: 18px; color: #666;">
-      A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences
-    </p>
+    <div class="hero-section">
+      <h1>santa</h1>
+      <p class="subheading">
+        A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences
+      </p>
+    </div>
     <form id="questionForm" action="/submit" method="post">
       {% for item in questions_data %}
       <div class="question">
