@@ -98,7 +98,10 @@ async def home(request: Request):
     saved_step = 1
     
     # Try to get existing session
-    session_id = cookie(request)
+    try:
+        session_id = cookie(request)
+    except:
+        session_id = None
     if session_id:
         session_data = await backend.read(session_id)
         if session_data:
