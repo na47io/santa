@@ -214,6 +214,12 @@ async def submit_answers(
     # Get suggestions and summary
     result = process_answers(answers, budget)
     
+    # Clear all form state from session
+    if session_id:
+        # Create empty session data with default values
+        empty_session = SessionData()
+        await backend.update(session_id, empty_session)
+    
     response = RedirectResponse(url="/results", status_code=303)
     cookie.attach_to_response(response, session_id)
     return response
