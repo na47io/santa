@@ -125,6 +125,7 @@ async def autosave(
     
     # Create or update session
     session_data = SessionData(answers=answers, budget=budget)
+    print(session_data)
     if not session_id:
         session_id = uuid4()
         await backend.create(session_id, session_data)
