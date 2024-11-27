@@ -32,11 +32,9 @@
       {% for question in questions %}
       <div class="question">
         <label for="q{{loop.index}}">{{question}}</label>
-        <textarea
-          id="q{{loop.index}}"
-          name="q{{loop.index}}"
-          required
-        >{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
+        <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>
+{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
+        >
       </div>
       {% endfor %}
 
@@ -54,8 +52,19 @@
         <span id="currencySymbol"></span>
       </div>
 
-      <div style="margin-top: 20px;">
-        <button type="submit" style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      <div style="margin-top: 20px">
+        <button
+          type="submit"
+          style="
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          "
+        >
           Get Gift Suggestions
         </button>
       </div>
@@ -85,11 +94,12 @@
 
       function autosave() {
         clearTimeout(autosaveTimeout);
-        
+
         autosaveTimeout = setTimeout(async () => {
+          console.log('Autosaving...');
           const form = document.getElementById('questionForm');
           const formData = {};
-          
+
           // Collect all form data
           for (let i = 1; i <= questions.length; i++) {
             const textarea = form.querySelector(`#q${i}`);
@@ -97,12 +107,12 @@
               formData[`q${i}`] = textarea.value;
             }
           }
-          
+
           const budgetInput = form.querySelector('#budget');
           if (budgetInput) {
             formData.budget = budgetInput.value;
           }
-          
+
           try {
             const response = await fetch('/autosave', {
               method: 'POST',
@@ -111,10 +121,12 @@
               },
               body: JSON.stringify(formData)
             });
-            
+
             if (!response.ok) {
               console.error('Autosave failed');
             }
+
+          console.log('session saved');
           } catch (error) {
             console.error('Autosave error:', error);
           }
