@@ -255,7 +255,7 @@ a:hover {
 /* Mobile optimizations */
 @media (max-width: 600px) {
     h1 {
-        font-size: 24px;
+        font-size: 36px;
     }
     
     textarea {
