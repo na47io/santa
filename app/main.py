@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends
+from fastapi import FastAPI, Request, Form, Depends, Response
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -85,8 +85,11 @@ questions_data = [
     }
 ]
 
-# Extract just questions for existing functionality
-questions = [q["question"] for q in questions_data]
+@app.get("/up")
+async def health_check():
+    """Health check endpoint that always returns 200 OK"""
+    return Response(status_code=200)
+
 
 @app.get("/")
 async def home(request: Request):
