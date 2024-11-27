@@ -32,6 +32,7 @@
           >
             ×
           </button>
+          <span class="save-indicator" id="indicator-q{{loop.index}}"></span>
         </div>
       </div>
       {% endfor %}
@@ -87,11 +88,29 @@
       let autosaveTimeout;
       const AUTOSAVE_DELAY = 2000; // 2 seconds
 
-      function autosave() {
+      function showSavingIndicator(id) {
+        const indicator = document.getElementById(`indicator-${id}`);
+        if (indicator) {
+          indicator.textContent = 'Saving...';
+          indicator.classList.add('visible');
+        }
+      }
+
+      function showSavedIndicator(id) {
+        const indicator = document.getElementById(`indicator-${id}`);
+        if (indicator) {
+          indicator.textContent = 'Saved';
+          setTimeout(() => {
+            indicator.classList.remove('visible');
+          }, 2000);
+        }
+      }
+
+      function autosave(triggerId) {
         clearTimeout(autosaveTimeout);
+        showSavingIndicator(triggerId);
 
         autosaveTimeout = setTimeout(async () => {
-          console.log('Autosaving...');
           const form = document.getElementById('questionForm');
           const formData = {};
 
@@ -121,7 +140,8 @@
               console.error('Autosave failed');
             }
 
-          console.log('session saved');
+          // Show saved indicator for the triggering element
+          showSavedIndicator(triggerId);
           } catch (error) {
             console.error('Autosave error:', error);
           }
@@ -130,7 +150,7 @@
 
       // Add event listeners for autosave
       document.querySelectorAll('textarea, input').forEach(element => {
-        element.addEventListener('input', autosave);
+        element.addEventListener('input', () => autosave(element.id));
       });
 
       // Initial console message
