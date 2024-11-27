@@ -131,6 +131,7 @@
 
       // Add event listeners for autosave
       document.querySelectorAll('textarea, input').forEach(element => {
+        console.log(element)
         element.addEventListener('input', autosave);
       });
 
