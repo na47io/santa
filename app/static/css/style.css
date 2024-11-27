@@ -34,13 +34,13 @@ h1 {
 
 .clear-button {
     position: absolute;
-    right: 10px;
-    top: 38px; /* Positioned below the label */
+    right: -30px;
+    top: 33px; /* Aligned with textarea top */
     background: #fff;
-    border: none;
+    border: 1px solid #ddd;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
