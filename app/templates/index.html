@@ -11,9 +11,8 @@
       {% for question in questions %}
       <div class="question">
         <label for="q{{loop.index}}">{{question}}</label>
-        <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>
-{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
-        >
+        <button type="button" class="clear-button" onclick="clearTextarea('q{{loop.index}}')">×</button>
+        <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
       </div>
       {% endfor %}
 
@@ -115,6 +114,14 @@
 
       // Initial console message
       console.log('Autosave ready - will trigger on input');
+
+      // Function to clear textarea
+      function clearTextarea(id) {
+        const textarea = document.getElementById(id);
+        textarea.value = '';
+        textarea.focus();
+        autosave(); // Trigger autosave after clearing
+      }
     </script>
   </body>
 </html>

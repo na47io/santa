@@ -29,6 +29,31 @@ h1 {
 /* Form elements */
 .question {
     margin-bottom: 25px;
+    position: relative;
+}
+
+.clear-button {
+    position: absolute;
+    right: 10px;
+    top: 38px; /* Positioned below the label */
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    z-index: 2;
+    padding: 0;
+}
+
+.clear-button:hover {
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 textarea {
