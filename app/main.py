@@ -61,11 +61,28 @@ async def home(
     saved_answers = {}
     saved_budget = None
     
-    if session_id:
-        session_data = await backend.read(session_id)
-        if session_data:
-            saved_answers = session_data.answers
-            saved_budget = session_data.budget
+    # Create new session if one doesn't exist
+    if not session_id:
+        session_id = uuid4()
+        session_data = SessionData()
+        await backend.create(session_id, session_data)
+        response = templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "questions": questions,
+                "saved_answers": saved_answers,
+                "saved_budget": saved_budget
+            }
+        )
+        cookie.attach_to_response(response, session_id)
+        return response
+    
+    # Use existing session
+    session_data = await backend.read(session_id)
+    if session_data:
+        saved_answers = session_data.answers
+        saved_budget = session_data.budget
     
     return templates.TemplateResponse(
         "index.html",
