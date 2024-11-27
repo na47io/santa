@@ -137,6 +137,15 @@
       document.querySelectorAll('textarea, input').forEach(element => {
         element.addEventListener('input', autosave);
       });
+
+      // Start autosave loop when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        // Initial save
+        autosave();
+        
+        // Set up periodic autosave every 30 seconds
+        setInterval(autosave, 30000);
+      });
     </script>
   </body>
 </html>
