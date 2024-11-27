@@ -124,7 +124,8 @@ h1 {
 }
 
 textarea {
-    padding-right: 40px; /* Make room for the clear button */
+    padding: 10px 40px 10px 10px; /* Make room for the clear button */
+    box-sizing: border-box;
 }
 
 .clear-button {
