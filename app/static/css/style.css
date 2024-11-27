@@ -32,10 +32,18 @@ h1 {
     position: relative;
 }
 
+.question {
+    display: flex;
+    flex-direction: column;
+}
+
+.textarea-container {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
 .clear-button {
-    position: absolute;
-    right: -30px;
-    top: 33px; /* Aligned with textarea top */
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 50%;
@@ -47,8 +55,9 @@ h1 {
     cursor: pointer;
     color: #666;
     font-size: 14px;
-    z-index: 2;
     padding: 0;
+    margin-top: 8px;
+    flex-shrink: 0;
 }
 
 .clear-button:hover {

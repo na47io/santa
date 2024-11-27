@@ -13,8 +13,10 @@
       {% for question in questions %}
       <div class="question">
         <label for="q{{loop.index}}">{{question}}</label>
-        <button type="button" class="clear-button" onclick="clearTextarea('q{{loop.index}}')">×</button>
-        <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
+        <div class="textarea-container">
+          <textarea id="q{{loop.index}}" name="q{{loop.index}}" required>{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
+          <button type="button" class="clear-button" onclick="clearTextarea('q{{loop.index}}')">×</button>
+        </div>
       </div>
       {% endfor %}
 
