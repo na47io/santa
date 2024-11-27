@@ -146,7 +146,7 @@ input[type="number"] {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background: linear-gradient(135deg, #ffd700 0%, #ff4500 100%);
+    background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%);
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -192,7 +192,7 @@ input[type="number"] {
 .submit-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
-    background: linear-gradient(135deg, #ffe44d 0%, #ff5722 100%);
+    background: linear-gradient(135deg, #ff6666 0%, #dd0000 100%);
 }
 
 .submit-button:active {
