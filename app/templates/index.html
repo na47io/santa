@@ -3,9 +3,12 @@
   <head>
     <title>santa</title>
     <meta charset="UTF-8" />
-    <meta name="description" content="A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences">
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <meta
+      name="description"
+      content="A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences"
+    />
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
     <h1>santa</h1>
@@ -14,8 +17,21 @@
       <div class="question">
         <label for="q{{loop.index}}">{{item.question}}</label>
         <div class="textarea-container">
-          <textarea id="q{{loop.index}}" name="q{{loop.index}}" required placeholder="{{item.placeholder}}">{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
-          <button type="button" class="clear-button" onclick="clearTextarea('q{{loop.index}}')">×</button>
+          <textarea
+            id="q{{loop.index}}"
+            name="q{{loop.index}}"
+            required
+            placeholder="{{item.placeholder}}"
+          >
+{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
+          >
+          <button
+            type="button"
+            class="clear-button"
+            onclick="clearTextarea('q{{loop.index}}')"
+          >
+            ×
+          </button>
         </div>
       </div>
       {% endfor %}
@@ -26,6 +42,7 @@
           type="number"
           id="budget"
           name="budget"
+          placeholder="50"
           required
           min="0"
           step="1"
