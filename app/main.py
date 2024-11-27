@@ -53,15 +53,19 @@ async def home(request: Request):
         {"request": request, "questions": questions}
     )
 
-def process_answers(answers: dict, budget: int) -> list:
-    """Process the answers and return gift suggestions"""
+def process_answers(answers: dict, budget: int) -> dict:
+    """Process the answers and return gift suggestions with summary"""
     # This is a pass-through function for now
     # Later it will process the answers and generate real suggestions
-    return [
-        f"Sample gift suggestion 1 within ${budget} budget",
-        f"Sample gift suggestion 2 within ${budget} budget",
-        f"Sample gift suggestion 3 within ${budget} budget"
-    ]
+    return {
+        "summary": "Based on your responses, it seems like your recipient is creative, tech-savvy, and appreciates meaningful experiences. They have a strong connection to music and enjoy both practical and sentimental gifts. Here are some suggestions that align with their interests and your budget:",
+        "suggestions": [
+            f"A high-quality digital drawing tablet (within ${budget} budget)",
+            f"Concert tickets for their favorite band's next tour (within ${budget} budget)",
+            f"A custom photo album of your shared memories (within ${budget} budget)",
+            f"A premium subscription to their favorite creative software (within ${budget} budget)"
+        ]
+    }
 
 @app.post("/submit")
 async def submit_answers(request: Request):
@@ -77,12 +81,12 @@ async def submit_answers(request: Request):
         else:
             answers[key] = value
     
-    # Get suggestions
-    suggestions = process_answers(answers, budget)
+    # Get suggestions and summary
+    result = process_answers(answers, budget)
     
     return templates.TemplateResponse(
         "results.html",
-        {"request": request, "suggestions": suggestions}
+        {"request": request, "summary": result["summary"], "suggestions": result["suggestions"]}
     )
 
 if __name__ == "__main__":
