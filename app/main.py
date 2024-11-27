@@ -103,6 +103,34 @@ def process_answers(answers: dict, budget: int) -> dict:
         ]
     }
 
+@app.post("/autosave")
+async def autosave(
+    request: Request,
+    session_id: UUID | None = Depends(cookie)
+):
+    form_data = await request.json()
+    
+    # Extract answers and budget
+    answers = {}
+    budget = None
+    
+    for key, value in form_data.items():
+        if key == "budget":
+            try:
+                budget = int(value)
+            except (ValueError, TypeError):
+                pass
+        else:
+            answers[key] = value
+    
+    # Create or update session
+    session_data = SessionData(answers=answers, budget=budget)
+    if not session_id:
+        session_id = uuid4()
+    await backend.create(session_id, session_data)
+    
+    return {"status": "success"}
+
 @app.post("/submit")
 async def submit_answers(
     request: Request,

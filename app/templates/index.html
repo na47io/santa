@@ -78,6 +78,53 @@
 
       // Make questions available globally
       window.questions = {{ questions|tojson }};
+
+      // Autosave functionality
+      let autosaveTimeout;
+      const AUTOSAVE_DELAY = 2000; // 2 seconds
+
+      function autosave() {
+        clearTimeout(autosaveTimeout);
+        
+        autosaveTimeout = setTimeout(async () => {
+          const form = document.getElementById('questionForm');
+          const formData = {};
+          
+          // Collect all form data
+          for (let i = 1; i <= questions.length; i++) {
+            const textarea = form.querySelector(`#q${i}`);
+            if (textarea) {
+              formData[`q${i}`] = textarea.value;
+            }
+          }
+          
+          const budgetInput = form.querySelector('#budget');
+          if (budgetInput) {
+            formData.budget = budgetInput.value;
+          }
+          
+          try {
+            const response = await fetch('/autosave', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(formData)
+            });
+            
+            if (!response.ok) {
+              console.error('Autosave failed');
+            }
+          } catch (error) {
+            console.error('Autosave error:', error);
+          }
+        }, AUTOSAVE_DELAY);
+      }
+
+      // Add event listeners for autosave
+      document.querySelectorAll('textarea, input').forEach(element => {
+        element.addEventListener('input', autosave);
+      });
     </script>
   </body>
 </html>
