@@ -138,15 +138,16 @@
         element.addEventListener('input', autosave);
       });
 
-      // Start autosave loop when page loads
-      document.addEventListener('DOMContentLoaded', () => {
-        console.log('helllooooo!!!')
-        // Initial save
+      // Start autosave loop immediately
+      console.log('Starting autosave...');
+      // Initial save
+      autosave();
+      
+      // Set up periodic autosave every 30 seconds
+      setInterval(() => {
+        console.log('Periodic autosave triggered');
         autosave();
-
-        // Set up periodic autosave every 30 seconds
-        setInterval(autosave, 30000);
-      });
+      }, 30000);
     </script>
   </body>
 </html>
