@@ -79,23 +79,20 @@ h1 {
 
 .progress-container {
     margin: 20px 0;
-    background: #f0f0f0;
-    border-radius: 10px;
-    padding: 3px;
-}
-
-.progress-bar {
-    height: 10px;
-    background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%);
-    border-radius: 7px;
-    transition: width 0.3s ease;
 }
 
 .progress-text {
     text-align: center;
     font-size: 14px;
     color: #666;
-    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%);
+    border-radius: 5px;
+    transition: width 0.3s ease;
 }
 
 .nav-button {

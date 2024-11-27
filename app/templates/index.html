@@ -23,8 +23,8 @@
     <form id="questionForm" action="/submit" method="post">
       <div class="wizard-container">
         <div class="progress-container">
-          <div class="progress-bar" id="progress"></div>
           <div class="progress-text">Question <span id="currentStep">1</span> of <span id="totalSteps">{{ questions_data|length + 1 }}</span></div>
+          <div class="progress-bar" id="progress"></div>
         </div>
 
         {% for item in questions_data %}
