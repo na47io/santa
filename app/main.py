@@ -127,7 +127,9 @@ async def autosave(
     session_data = SessionData(answers=answers, budget=budget)
     if not session_id:
         session_id = uuid4()
-    await backend.create(session_id, session_data)
+        await backend.create(session_id, session_data)
+    else:
+        await backend.update(session_id, session_data)
     
     return {"status": "success"}
 
