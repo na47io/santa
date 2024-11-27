@@ -134,16 +134,8 @@
         element.addEventListener('input', autosave);
       });
 
-      // Start autosave loop immediately
-      console.log('Starting autosave...');
-      // Initial save
-      autosave();
-      
-      // Set up periodic autosave every 30 seconds
-      setInterval(() => {
-        console.log('Periodic autosave triggered');
-        autosave();
-      }, 30000);
+      // Initial console message
+      console.log('Autosave ready - will trigger on input');
     </script>
   </body>
 </html>
