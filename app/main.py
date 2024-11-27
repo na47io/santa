@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from pathlib import Path
 
 app = FastAPI()
@@ -50,6 +51,38 @@ async def home(request: Request):
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "questions": questions}
+    )
+
+def process_answers(answers: dict, budget: int) -> list:
+    """Process the answers and return gift suggestions"""
+    # This is a pass-through function for now
+    # Later it will process the answers and generate real suggestions
+    return [
+        f"Sample gift suggestion 1 within ${budget} budget",
+        f"Sample gift suggestion 2 within ${budget} budget",
+        f"Sample gift suggestion 3 within ${budget} budget"
+    ]
+
+@app.post("/submit")
+async def submit_answers(request: Request):
+    form_data = await request.form()
+    
+    # Extract answers and budget
+    answers = {}
+    budget = None
+    
+    for key, value in form_data.items():
+        if key == "budget":
+            budget = int(value)
+        else:
+            answers[key] = value
+    
+    # Get suggestions
+    suggestions = process_answers(answers, budget)
+    
+    return templates.TemplateResponse(
+        "results.html",
+        {"request": request, "suggestions": suggestions}
     )
 
 if __name__ == "__main__":

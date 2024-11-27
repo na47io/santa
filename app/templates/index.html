@@ -28,7 +28,7 @@
   </head>
   <body>
     <h1>santa</h1>
-    <form id="questionForm">
+    <form id="questionForm" action="/submit" method="post">
       {% for question in questions %}
       <div class="question">
         <label for="q{{loop.index}}">{{question}}</label>
