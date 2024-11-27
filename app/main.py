@@ -127,20 +127,16 @@ async def autosave(
     
     # Create or update session
     session_data = SessionData(answers=answers, budget=budget)
-
-    print(session_data)
     
     if not session_id:
         session_id = uuid4()
-    
-    # Delete existing session if it exists
-    try:
-        await backend.delete(session_id)
-    except:
-        pass
-        
-    # Create new session
-    await backend.create(session_id, session_data)
+        await backend.create(session_id, session_data)
+    else:
+        try:
+            await backend.update(session_id, session_data)
+        except:
+            # If update fails, create new session
+            await backend.create(session_id, session_data)
     
     response = JSONResponse(content={"status": "success"})
     cookie.attach_to_response(response, session_id)
@@ -168,15 +164,13 @@ async def submit_answers(
     
     if not session_id:
         session_id = uuid4()
-    
-    # Delete existing session if it exists
-    try:
-        await backend.delete(session_id)
-    except:
-        pass
-        
-    # Create new session
-    await backend.create(session_id, session_data)
+        await backend.create(session_id, session_data)
+    else:
+        try:
+            await backend.update(session_id, session_data)
+        except:
+            # If update fails, create new session
+            await backend.create(session_id, session_data)
     
     # Get suggestions and summary
     result = process_answers(answers, budget)
