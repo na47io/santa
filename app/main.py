@@ -125,14 +125,22 @@ async def autosave(
     
     # Create or update session
     session_data = SessionData(answers=answers, budget=budget)
-    print(session_data)
+    
     if not session_id:
         session_id = uuid4()
-        await backend.create(session_id, session_data)
-    else:
-        await backend.update(session_id, session_data)
     
-    return {"status": "success"}
+    # Delete existing session if it exists
+    try:
+        await backend.delete(session_id)
+    except:
+        pass
+        
+    # Create new session
+    await backend.create(session_id, session_data)
+    
+    response = {"status": "success"}
+    cookie.attach_to_response(response, session_id)
+    return response
 
 @app.post("/submit")
 async def submit_answers(
@@ -153,18 +161,25 @@ async def submit_answers(
     
     # Create or update session
     session_data = SessionData(answers=answers, budget=budget)
+    
     if not session_id:
         session_id = uuid4()
+    
+    # Delete existing session if it exists
+    try:
+        await backend.delete(session_id)
+    except:
+        pass
+        
+    # Create new session
     await backend.create(session_id, session_data)
-    cookie.attach_to_response(RedirectResponse(url="/results"), session_id)
     
     # Get suggestions and summary
     result = process_answers(answers, budget)
     
-    return templates.TemplateResponse(
-        "results.html",
-        {"request": request, "summary": result["summary"], "suggestions": result["suggestions"]}
-    )
+    response = RedirectResponse(url="/results", status_code=303)
+    cookie.attach_to_response(response, session_id)
+    return response
 
 @app.get("/results")
 async def view_results(
