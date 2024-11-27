@@ -115,6 +115,8 @@ async def home(request: Request):
         session_data = SessionData()
         await backend.create(session_id, session_data)
 
+    print("FUUUUUUUUUU")
+    print(session_id, session_data)
     
     response = templates.TemplateResponse(
         "index.html",
