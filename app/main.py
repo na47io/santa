@@ -54,41 +54,30 @@ questions = [
 ]
 
 @app.get("/")
-async def home(
-    request: Request,
-    session_id: UUID | None = Depends(cookie),
-):
-    print('hello world')
+async def home(request: Request):
     saved_answers = {}
     saved_budget = None
-    print(session_id)
     
-    # Create new session if one doesn't exist
+    # Try to get existing session
+    session_id = None
+    try:
+        session_id = await cookie(request)
+        if session_id:
+            session_data = await backend.read(session_id)
+            if session_data:
+                saved_answers = session_data.answers
+                saved_budget = session_data.budget
+    except:
+        pass
+    
+    # Create new session if none exists
     if not session_id:
-        print('aaaaa')
         session_id = uuid4()
         session_data = SessionData()
         await backend.create(session_id, session_data)
-        response = templates.TemplateResponse(
-            "index.html",
-            {
-                "request": request,
-                "questions": questions,
-                "saved_answers": saved_answers,
-                "saved_budget": saved_budget
-            }
-        )
-        cookie.attach_to_response(response, session_id)
-        return response
 
     
-    # Use existing session
-    session_data = await backend.read(session_id)
-    if session_data:
-        saved_answers = session_data.answers
-        saved_budget = session_data.budget
-    
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         "index.html",
         {
             "request": request,
@@ -97,6 +86,8 @@ async def home(
             "saved_budget": saved_budget
         }
     )
+    cookie.attach_to_response(response, session_id)
+    return response
 
 def process_answers(answers: dict, budget: int) -> dict:
     """Process the answers and return gift suggestions with summary"""

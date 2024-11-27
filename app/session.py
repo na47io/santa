@@ -14,7 +14,7 @@ cookie_params = CookieParameters()
 cookie = SessionCookie(
     cookie_name="gift_session",
     identifier="general_verifier",
-    auto_error=True,
+    auto_error=False,
     secret_key="CHANGE_THIS_TO_A_REAL_SECRET_KEY",
     cookie_params=cookie_params,
 )
