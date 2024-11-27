@@ -39,8 +39,15 @@ h1 {
 
 .textarea-container {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.textarea-controls {
+    display: flex;
+    align-items: center;
     gap: 10px;
-    align-items: flex-start;
+    position: relative;
 }
 
 .clear-button {
@@ -68,9 +75,10 @@ h1 {
 .save-indicator {
     font-size: 12px;
     color: #666;
-    margin-left: 8px;
+    margin-top: 4px;
     opacity: 0;
     transition: opacity 0.3s ease;
+    text-align: right;
 }
 
 .save-indicator.visible {

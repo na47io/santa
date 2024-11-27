@@ -17,24 +17,22 @@
       <div class="question">
         <label for="q{{loop.index}}">{{item.question}}</label>
         <div class="textarea-container">
-          <textarea
-            id="q{{loop.index}}"
-            name="q{{loop.index}}"
-            required
-            placeholder="{{item.placeholder}}"
-          >
-{{ saved_answers.get('q' ~ loop.index, '') }}</textarea
-          >
-          <button
-            type="button"
-            class="clear-button"
-            onclick="clearTextarea('q{{loop.index}}')"
-          >
-            ×
-          </button>
-          <span class="save-indicator" id="indicator-q{{loop.index}}"
-            >aaaa</span
-          >
+          <div class="textarea-controls">
+            <textarea
+              id="q{{loop.index}}"
+              name="q{{loop.index}}"
+              required
+              placeholder="{{item.placeholder}}"
+            >{{ saved_answers.get('q' ~ loop.index, '') }}</textarea>
+            <button
+              type="button"
+              class="clear-button"
+              onclick="clearTextarea('q{{loop.index}}')"
+            >
+              ×
+            </button>
+          </div>
+          <span class="save-indicator" id="indicator-q{{loop.index}}"></span>
         </div>
       </div>
       {% endfor %}
