@@ -50,7 +50,7 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
 7. Ensure suggestions are specific (include brands, models, or types)
 8. Consider how each gift connects to the information provided
 
-Aim for suggestions that show you've really understood their personality and relationship dynamics."""
+Aim for suggestions that show you've really understood their personality and relationship dynamics.""",
                 },
                 {"role": "user", "content": prompt},
             ],
@@ -64,14 +64,12 @@ Aim for suggestions that show you've really understood their personality and rel
                         "properties": {
                             "summary": {
                                 "type": "string",
-                                "description": "A brief 2-3 sentence analysis of the recipient's personality and interests",
+                                "description": "A brief 2-3 sentence analysis of the recipient's personality and interests.",
                             },
                             "suggestions": {
                                 "type": "array",
-                                "description": "Specific gift ideas within the budget",
+                                "description": "Specific gift ideas within the budget.",
                                 "items": {"type": "string"},
-                                "minItems": 4,
-                                "maxItems": 5,
                             },
                         },
                         "required": ["summary", "suggestions"],
