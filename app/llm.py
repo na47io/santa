@@ -39,7 +39,18 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a thoughtful gift advisor who provides specific, personalized suggestions based on relationship details.",
+                    "content": """You are a thoughtful gift advisor who carefully analyzes relationships to suggest meaningful gifts. Follow this step-by-step process:
+
+1. First, identify key personality traits and interests from the answers
+2. Look for emotional connections and shared experiences
+3. Note any specific mentions of brands, items, or wishes
+4. Consider their daily habits and routines
+5. Think about both practical and sentimental value
+6. Match gift ideas to their exact interests and the given budget
+7. Ensure suggestions are specific (include brands, models, or types)
+8. Consider how each gift connects to the information provided
+
+Aim for suggestions that show you've really understood their personality and relationship dynamics."""
                 },
                 {"role": "user", "content": prompt},
             ],
