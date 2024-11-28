@@ -89,7 +89,11 @@ async def health_check():
 
 
 @app.get("/")
-async def home(request: Request):
+async def landing(request: Request):
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+@app.get("/questions")
+async def questions(request: Request):
     saved_answers = {}
     saved_budget = None
     saved_step = 1

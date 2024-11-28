@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <title>santa</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="description"
+      content="A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences"
+    />
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <div class="hero-section">
+      <h1>santa</h1>
+      <p class="subheading">
+        A thoughtful gift suggestion tool that helps you find the perfect
+        present by analyzing your relationship and shared experiences
+      </p>
+    </div>
+    
+    <form id="recipientForm" action="/questions" method="get">
+      <div class="recipient-input">
+        <label for="recipient">Who are you getting a gift for?</label>
+        <input 
+          type="text" 
+          id="recipient" 
+          name="recipient" 
+          required 
+          placeholder="e.g. partner, friend, mother, colleague..."
+        >
+        <button type="submit" class="submit-button">
+          Start Gift Journey 🎁
+        </button>
+      </div>
+    </form>
+
+    <style>
+      .recipient-input {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .recipient-input label {
+        display: block;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+      }
+
+      .recipient-input input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        font-size: 1.1em;
+      }
+
+      .recipient-input input:focus {
+        border-color: #d42426;
+        outline: none;
+      }
+    </style>
+  </body>
+</html>
