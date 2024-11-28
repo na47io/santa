@@ -46,27 +46,37 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
             temperature=0.7,
             max_tokens=1000,
             response_format={
-                "type": "json_object",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "summary": {
-                            "type": "string",
-                            "description": "A brief 2-3 sentence analysis of the recipient's personality and interests",
-                        },
-                        "suggestions": {
-                            "type": "array",
-                            "items": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "gift_suggestions",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "summary": {
                                 "type": "string",
-                                "description": "A specific gift idea within the budget",
+                                "description": "A brief 2-3 sentence analysis of the recipient's personality and interests"
                             },
-                            "minItems": 4,
-                            "maxItems": 5,
+                            "suggestions": {
+                                "type": "array",
+                                "description": "Specific gift ideas within the budget",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "minItems": 4,
+                                "maxItems": 5
+                            }
                         },
-                    },
-                    "required": ["summary", "suggestions"],
-                },
+                        "required": ["summary", "suggestions"],
+                        "additionalProperties": False
+                    }
+                }
             },
+            temperature=0.7,
+            max_tokens=2048,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
         )
 
         # Parse and return the response
