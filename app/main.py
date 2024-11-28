@@ -97,19 +97,28 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
         else:
             answers[key] = value
 
-    # Create or update session
-    session_data = SessionData(
-        answers=answers, budget=budget, current_step=current_step
-    )
-
+    # Get existing session or create new one
     if not session_id:
         session_id = uuid4()
-        await backend.create(session_id, session_data)
+        session_data = SessionData()
     else:
         try:
-            await backend.update(session_id, session_data)
+            session_data = await backend.read(session_id)
+            if not session_data:
+                session_data = SessionData()
         except:
-            # If update fails, create new session
+            session_data = SessionData()
+
+    # Update only the changed fields
+    session_data.answers = answers
+    session_data.budget = budget
+    session_data.current_step = current_step
+
+    # Save the updated session
+    try:
+        if await backend.read(session_id):
+            await backend.update(session_id, session_data)
+        else:
             await backend.create(session_id, session_data)
 
     response = JSONResponse(content={"status": "success"})
