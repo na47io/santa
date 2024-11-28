@@ -13,6 +13,9 @@ dependencies = [
     "itsdangerous>=2.2.0",
     "fastapi-sessions>=0.3.2",
     "uuid>=1.30",
+    "ruff>=0.8.0",
+    "openai>=1.55.2",
+    "pydantic>=2.10.2",
 ]
 
 [tool.uv.sources]
