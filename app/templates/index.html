@@ -25,7 +25,12 @@
         present by analyzing your relationship and shared experiences
       </p>
     </div>
-    <form id="questionForm" action="/submit" method="post">
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p>Analyzing your responses...</p>
+    </div>
+    
+    <form id="questionForm" action="/submit" method="post" onsubmit="showLoading()">
       <div class="wizard-container">
         <div class="progress-container">
           <div class="progress-text">
@@ -280,6 +285,44 @@
         textarea.focus();
         autosave(); // Trigger autosave after clearing
       }
+      // Loading state function
+      function showLoading() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        // Disable form inputs during submission
+        document.querySelectorAll('textarea, input, button').forEach(el => {
+          el.disabled = true;
+        });
+      }
     </script>
+    <style>
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #d42426;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
   </body>
 </html>
