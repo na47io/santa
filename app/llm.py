@@ -35,7 +35,7 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
     # Call OpenAI API
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -43,8 +43,6 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
                 },
                 {"role": "user", "content": prompt},
             ],
-            temperature=0.7,
-            max_tokens=1000,
             response_format={
                 "type": "json_schema",
                 "json_schema": {
@@ -55,28 +53,26 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
                         "properties": {
                             "summary": {
                                 "type": "string",
-                                "description": "A brief 2-3 sentence analysis of the recipient's personality and interests"
+                                "description": "A brief 2-3 sentence analysis of the recipient's personality and interests",
                             },
                             "suggestions": {
                                 "type": "array",
                                 "description": "Specific gift ideas within the budget",
-                                "items": {
-                                    "type": "string"
-                                },
+                                "items": {"type": "string"},
                                 "minItems": 4,
-                                "maxItems": 5
-                            }
+                                "maxItems": 5,
+                            },
                         },
                         "required": ["summary", "suggestions"],
-                        "additionalProperties": False
-                    }
-                }
+                        "additionalProperties": False,
+                    },
+                },
             },
             temperature=0.7,
             max_tokens=2048,
             top_p=1,
             frequency_penalty=0,
-            presence_penalty=0
+            presence_penalty=0,
         )
 
         # Parse and return the response
