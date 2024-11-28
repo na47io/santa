@@ -50,13 +50,10 @@ async def questions(request: Request, recipient: str):
         session_data = SessionData()
         await backend.create(session_id, session_data)
 
-    print(session_data)
-
     # Generate questions if not in session or recipient changed
     if not session_data.questions or session_data.recipient != recipient:
-        print(recipient)
         questions_resp = create_questions(recipient)
-        session_data.questions = jsonable_encoder(questions_resp.questions)
+        session_data.questions = jsonable_encoder(questions_resp.questions[:1])
         session_data.recipient = recipient
         await backend.update(session_id, session_data)
 
@@ -132,11 +129,14 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
 async def submit_answers(request: Request, session_id: UUID | None = Depends(cookie)):
     form_data = await request.form()
 
+    print(form_data)
+
     # Extract answers and budget
     answers = {}
     budget = None
 
     for key, value in form_data.items():
+        print(key, value)
         if key == "budget":
             budget = int(value)
         else:
@@ -144,14 +144,10 @@ async def submit_answers(request: Request, session_id: UUID | None = Depends(coo
 
     # Get existing session or create new one
     if not session_id:
-        session_id = uuid4()
-        session_data = SessionData()
+        raise Exception("Session ID missing")
     else:
-        try:
-            session_data = await backend.read(session_id)
-            if not session_data:
-                session_data = SessionData()
-        except:
+        session_data = await backend.read(session_id)
+        if not session_data:
             session_data = SessionData()
 
     # Update only the changed fields
@@ -178,6 +174,7 @@ async def view_results(request: Request, session_id: UUID = Depends(cookie)):
     if not session_data:
         return RedirectResponse(url="/")
 
+    print(session_data)
     result = process_answers(session_data.answers, session_data.budget)
 
     # Clear all form state from session
