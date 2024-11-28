@@ -35,6 +35,10 @@ registry:
 builder:
   arch: amd64
 
+env:
+  secret:
+    - OPENAI_API_KEY
+
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 #
 # env:
