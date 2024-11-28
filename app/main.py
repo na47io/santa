@@ -120,6 +120,8 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
             await backend.update(session_id, session_data)
         else:
             await backend.create(session_id, session_data)
+    except Exception as e:
+        raise e
 
     response = JSONResponse(content={"status": "success"})
     cookie.attach_to_response(response, session_id)
