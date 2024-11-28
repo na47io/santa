@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, Response
+from fastapi import FastAPI, Request, Form, Depends, Response, Cookie
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -6,7 +6,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.encoders import jsonable_encoder
 from pathlib import Path
 from uuid import UUID, uuid4
-from .session import SessionData, cookie, backend, verifier
+from typing import Optional
+from .session import SessionData, SessionManager, attach_session_id, get_session_id
+from .database import get_db
 from .llm import process_answers, create_questions
 
 app = FastAPI()
@@ -32,22 +34,20 @@ async def landing(request: Request):
 
 @app.get("/questions")
 async def questions(
-    request: Request, recipient: str, session_id: UUID | None = Depends(cookie)
+    request: Request,
+    recipient: str,
+    session_id: Optional[UUID] = Depends(get_session_id),
+    db: Session = Depends(get_db)
 ):
-    session_data = await backend.read(session_id)
-
-    # Create new session if we don't have a valid one
-    if not session_id or not session_data:
-        session_id = uuid4()
-        session_data = SessionData()
-        await backend.create(session_id, session_data)
+    session_manager = SessionManager(db)
+    session_id, session_data = await session_manager.get_session(str(session_id) if session_id else None)
 
     # Generate questions if not in session or recipient changed
     if not session_data.questions or session_data.recipient != recipient:
         questions_resp = create_questions(recipient)
         session_data.questions = jsonable_encoder(questions_resp.questions[:1])
         session_data.recipient = recipient
-        await backend.update(session_id, session_data)
+        await session_manager.update_session(session_id, session_data)
 
     response = templates.TemplateResponse(
         "questions.html",
@@ -59,13 +59,22 @@ async def questions(
             "saved_step": session_data.current_step or 1,
         },
     )
-    cookie.attach_to_response(response, session_id)
+    attach_session_id(response, session_id)
     return response
 
 
 @app.post("/autosave")
-async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
+async def autosave(
+    request: Request,
+    session_id: Optional[UUID] = Depends(get_session_id),
+    db: Session = Depends(get_db)
+):
+    if not session_id:
+        raise Exception("Session ID missing")
+
     form_data = await request.json()
+    session_manager = SessionManager(db)
+    _, session_data = await session_manager.get_session(str(session_id))
 
     # Extract answers, budget and current step
     answers = {}
@@ -86,34 +95,30 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
         else:
             answers[key] = value
 
-    # Get existing session or create new one
-    if not session_id:
-        raise Exception("Session ID missing")
-
-    session_data = await backend.read(session_id)
-
-    # Update only the changed fields
+    # Update session data
     session_data.answers = answers
     session_data.budget = budget
     session_data.current_step = current_step
 
-    # Save the updated session
-    try:
-        if await backend.read(session_id):
-            await backend.update(session_id, session_data)
-        else:
-            await backend.create(session_id, session_data)
-    except Exception as e:
-        raise e
+    await session_manager.update_session(session_id, session_data)
 
     response = JSONResponse(content={"status": "success"})
-    cookie.attach_to_response(response, session_id)
+    attach_session_id(response, session_id)
     return response
 
 
 @app.post("/submit")
-async def submit_answers(request: Request, session_id: UUID | None = Depends(cookie)):
+async def submit_answers(
+    request: Request,
+    session_id: Optional[UUID] = Depends(get_session_id),
+    db: Session = Depends(get_db)
+):
+    if not session_id:
+        raise Exception("Session ID missing")
+
     form_data = await request.form()
+    session_manager = SessionManager(db)
+    _, session_data = await session_manager.get_session(str(session_id))
 
     # Extract answers and budget
     answers = {}
@@ -125,43 +130,36 @@ async def submit_answers(request: Request, session_id: UUID | None = Depends(coo
         else:
             answers[key] = value
 
-    session_data = await backend.read(session_id)
-
-    # Get existing session or create new one
-    if not session_id:
-        raise Exception("Session ID missing")
-
-    # Update only the changed fields
+    # Update session data
     session_data.answers = answers
     session_data.budget = budget
 
-    # Save the updated session
-    try:
-        if await backend.read(session_id):
-            await backend.update(session_id, session_data)
-        else:
-            await backend.create(session_id, session_data)
-    except Exception as e:
-        raise e
+    await session_manager.update_session(session_id, session_data)
 
     response = RedirectResponse(url="/results", status_code=303)
-    cookie.attach_to_response(response, session_id)
+    attach_session_id(response, session_id)
     return response
 
 
 @app.get("/results")
-async def view_results(request: Request, session_id: UUID = Depends(cookie)):
-    session_data = await backend.read(session_id)
+async def view_results(
+    request: Request,
+    session_id: Optional[UUID] = Depends(get_session_id),
+    db: Session = Depends(get_db)
+):
+    if not session_id:
+        return RedirectResponse(url="/")
+
+    session_manager = SessionManager(db)
+    _, session_data = await session_manager.get_session(str(session_id))
+
     if not session_data:
         return RedirectResponse(url="/")
 
     result = process_answers(session_data.answers, session_data.budget)
 
-    # TODO clear this in a good way in case we want to hold onto the cookie
-    if session_id:
-        # Create empty session data with default values
-        empty_session = SessionData()
-        await backend.update(session_id, empty_session)
+    # Clean up the session
+    await session_manager.delete_session(session_id)
 
     return templates.TemplateResponse(
         "results.html",
