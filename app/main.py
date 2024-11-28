@@ -31,7 +31,7 @@ async def landing(request: Request):
 
 
 @app.get("/questions")
-async def questions(request: Request):
+async def questions(request: Request, recipient: str):
     saved_answers = {}
     saved_budget = None
     saved_step = 1
@@ -61,7 +61,7 @@ async def questions(request: Request):
         session_data = SessionData()
         await backend.create(session_id, session_data)
 
-    questions_resp = create_questions("friend")
+    questions_resp = create_questions(recipient)
 
     response = templates.TemplateResponse(
         "questions.html",
