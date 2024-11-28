@@ -133,7 +133,6 @@ async def home(request: Request):
     return response
 
 
-
 @app.post("/autosave")
 async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
     form_data = await request.json()
@@ -204,9 +203,6 @@ async def submit_answers(request: Request, session_id: UUID | None = Depends(coo
             # If update fails, create new session
             await backend.create(session_id, session_data)
 
-    # Get suggestions and summary
-    result = process_answers(answers, budget)
-
     # Clear all form state from session
     if session_id:
         # Create empty session data with default values
@@ -230,8 +226,8 @@ async def view_results(request: Request, session_id: UUID = Depends(cookie)):
         "results.html",
         {
             "request": request,
-            "summary": result["summary"],
-            "suggestions": result["suggestions"],
+            "summary": result.summary,
+            "suggestions": result.suggestions,
         },
     )
 
