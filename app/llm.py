@@ -10,7 +10,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def create_questions(relationship_type: str) -> dict:
+def create_questions(relationship_type: str) -> QuestionResponse:
     """
     Provide a set of questions based on the relationship type
     """
