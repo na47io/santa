@@ -32,26 +32,15 @@ async def landing(request: Request):
 
 @app.get("/questions")
 async def questions(request: Request, recipient: str):
-    saved_answers = {}
-    saved_budget = None
-    saved_step = 1
-
     # Try to get existing valid session
     session_id = None
     session_data = None
 
     try:
         existing_id = cookie(request)
-        if existing_id:
-            try:
-                session_data = await backend.read(existing_id)
-                if session_data:
-                    session_id = existing_id
-                    saved_answers = session_data.answers
-                    saved_budget = session_data.budget
-                    saved_step = session_data.current_step
-            except:
-                pass
+        session_data = await backend.read(existing_id)
+        if session_data:
+            session_id = existing_id
     except:
         pass
 
@@ -61,21 +50,24 @@ async def questions(request: Request, recipient: str):
         session_data = SessionData()
         await backend.create(session_id, session_data)
 
+    print(session_data)
+
     # Generate questions if not in session or recipient changed
     if not session_data.questions or session_data.recipient != recipient:
+        print(recipient)
         questions_resp = create_questions(recipient)
         session_data.questions = jsonable_encoder(questions_resp.questions)
         session_data.recipient = recipient
         await backend.update(session_id, session_data)
-    
+
     response = templates.TemplateResponse(
         "questions.html",
         {
             "request": request,
             "questions_data": session_data.questions,
-            "saved_answers": saved_answers,
-            "saved_budget": saved_budget,
-            "saved_step": saved_step,
+            "saved_answers": session_data.answers or {},
+            "saved_budget": session_data.budget or 10,
+            "saved_step": session_data.current_step or 1,
         },
     )
     cookie.attach_to_response(response, session_id)
