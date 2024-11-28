@@ -39,10 +39,12 @@ async def questions(
     request: Request,
     recipient: str,
     session_id: Optional[UUID] = Depends(get_session_id),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     session_manager = SessionManager(db)
-    session_id, session_data = await session_manager.get_session(str(session_id) if session_id else None)
+    session_id, session_data = await session_manager.get_session(
+        str(session_id) if session_id else None
+    )
 
     # Generate questions if not in session or recipient changed
     if not session_data.questions or session_data.recipient != recipient:
@@ -69,7 +71,7 @@ async def questions(
 async def autosave(
     request: Request,
     session_id: Optional[UUID] = Depends(get_session_id),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     if not session_id:
         raise Exception("Session ID missing")
@@ -113,7 +115,7 @@ async def autosave(
 async def submit_answers(
     request: Request,
     session_id: Optional[UUID] = Depends(get_session_id),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     if not session_id:
         raise Exception("Session ID missing")
@@ -147,7 +149,7 @@ async def submit_answers(
 async def view_results(
     request: Request,
     session_id: Optional[UUID] = Depends(get_session_id),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     if not session_id:
         return RedirectResponse(url="/")
@@ -175,35 +177,28 @@ async def view_results(
     )
 
 
-@app.get("/debug/sessions")
-async def view_sessions(
-    request: Request,
-    db: Session = Depends(get_db)
-):
+@app.get("/sessions")
+async def view_sessions(request: Request, db: Session = Depends(get_db)):
     """Debug endpoint to view all stored sessions"""
-    # Only allow in development
-    if not app.debug:
-        raise HTTPException(status_code=404)
-        
+
     sessions = db.query(SessionStore).all()
     session_data = []
-    
+
     for session in sessions:
         data = json.loads(session.data)
-        session_data.append({
-            "id": session.id,
-            "created_at": session.created_at,
-            "updated_at": session.updated_at,
-            "data": data
-        })
-    
+        session_data.append(
+            {
+                "id": session.id,
+                "created_at": session.created_at,
+                "updated_at": session.updated_at,
+                "data": data,
+            }
+        )
+
     return templates.TemplateResponse(
-        "debug_sessions.html",
-        {
-            "request": request,
-            "sessions": session_data
-        }
+        "debug_sessions.html", {"request": request, "sessions": session_data}
     )
+
 
 if __name__ == "__main__":
     import uvicorn
