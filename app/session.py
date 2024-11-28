@@ -1,9 +1,10 @@
 from uuid import UUID, uuid4
-from fastapi_sessions.backends.implementations import InMemoryBackend
-from fastapi_sessions.session_verifier import SessionVerifier
-from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from pydantic import BaseModel
-
+from fastapi import Cookie, Response
+from sqlalchemy.orm import Session
+from typing import Optional
+from .database import SessionStore
+import json
 
 class SessionData(BaseModel):
     answers: dict = {}
@@ -12,59 +13,56 @@ class SessionData(BaseModel):
     questions: list = []
     recipient: str = ""
 
+class SessionManager:
+    def __init__(self, db: Session):
+        self.db = db
+        
+    async def get_session(self, session_id: Optional[str] = None) -> tuple[UUID, SessionData]:
+        """Get or create a session"""
+        if session_id:
+            db_session = self.db.query(SessionStore).filter(SessionStore.id == session_id).first()
+            if db_session:
+                return UUID(session_id), SessionData(**json.loads(db_session.data))
+        
+        # Create new session
+        new_id = uuid4()
+        session_data = SessionData()
+        db_session = SessionStore(
+            id=str(new_id),
+            data=json.dumps(session_data.dict())
+        )
+        self.db.add(db_session)
+        self.db.commit()
+        
+        return new_id, session_data
 
-cookie_params = CookieParameters()
+    async def update_session(self, session_id: UUID, data: SessionData):
+        """Update session data"""
+        db_session = self.db.query(SessionStore).filter(SessionStore.id == str(session_id)).first()
+        if db_session:
+            db_session.data = json.dumps(data.dict())
+            self.db.commit()
 
-# Uses UUID
-cookie = SessionCookie(
-    cookie_name="gift_session",
-    identifier="general_verifier",
-    auto_error=False,
-    secret_key="CHANGE_THIS_TO_A_REAL_SECRET_KEY",
-    cookie_params=cookie_params,
-)
+    async def delete_session(self, session_id: UUID):
+        """Delete a session"""
+        self.db.query(SessionStore).filter(SessionStore.id == str(session_id)).delete()
+        self.db.commit()
 
-backend = InMemoryBackend[UUID, SessionData]()
+def attach_session_id(response: Response, session_id: UUID):
+    """Attach session ID to response cookie"""
+    response.set_cookie(
+        key="session_id",
+        value=str(session_id),
+        httponly=True,
+        max_age=1800,  # 30 minutes
+        samesite="lax"
+    )
 
-
-class BasicVerifier(SessionVerifier[UUID, SessionData]):
-    def __init__(
-        self,
-        *,
-        identifier: str,
-        auto_error: bool,
-        backend: InMemoryBackend[UUID, SessionData],
-        auth_http_exception: Exception,
-    ):
-        self._identifier = identifier
-        self._auto_error = auto_error
-        self._backend = backend
-        self._auth_http_exception = auth_http_exception
-
-    @property
-    def identifier(self):
-        return self._identifier
-
-    @property
-    def backend(self):
-        return self._backend
-
-    @property
-    def auto_error(self):
-        return self._auto_error
-
-    @property
-    def auth_http_exception(self):
-        return self._auth_http_exception
-
-    def verify_session(self, model: SessionData) -> bool:
-        """If the session exists, it is valid"""
-        return True
-
-
-verifier = BasicVerifier(
-    identifier="general_verifier",
-    auto_error=True,
-    backend=backend,
-    auth_http_exception=Exception,
-)
+def get_session_id(session_id: Optional[str] = Cookie(None)) -> Optional[UUID]:
+    """Get session ID from cookie"""
+    if session_id:
+        try:
+            return UUID(session_id)
+        except ValueError:
+            pass
+    return None
