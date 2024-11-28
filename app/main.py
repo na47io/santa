@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, Request, Form, Depends, Response, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -9,7 +10,7 @@ from uuid import UUID, uuid4
 from typing import Optional
 from sqlalchemy.orm import Session
 from .session import SessionData, SessionManager, attach_session_id, get_session_id
-from .database import get_db
+from .database import get_db, SessionStore
 from .llm import process_answers, create_questions
 
 app = FastAPI()
