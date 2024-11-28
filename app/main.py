@@ -180,8 +180,6 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
 async def submit_answers(request: Request, session_id: UUID | None = Depends(cookie)):
     form_data = await request.form()
 
-    print(form_data)
-
     # Extract answers and budget
     answers = {}
     budget = None
@@ -215,8 +213,6 @@ async def view_results(request: Request, session_id: UUID = Depends(cookie)):
     session_data = await backend.read(session_id)
     if not session_data:
         return RedirectResponse(url="/")
-
-    print(session_data)
 
     result = process_answers(session_data.answers, session_data.budget)
 
