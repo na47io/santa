@@ -1,6 +1,4 @@
 import os
-import json
-from typing import Dict
 from openai import OpenAI
 from dotenv import load_dotenv
 from .schema import GiftSuggestion
@@ -36,8 +34,8 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
 
     # Call OpenAI API
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
+        response = client.beta.chat.completions.parse(
+            model="gpt-4o-2024-08-06",
             messages=[
                 {
                     "role": "system",
@@ -56,12 +54,7 @@ Aim for suggestions that show you've really understood their personality and rel
                 },
                 {"role": "user", "content": prompt},
             ],
-            response_format={"type": "json_object"},
-            functions=[{
-                "name": "get_gift_suggestions",
-                "description": "Generate personalized gift suggestions based on relationship details",
-                "parameters": GiftSuggestion.model_json_schema()
-            }],
+            response_format=GiftSuggestion,
             temperature=0.7,
             max_tokens=2048,
             top_p=1,
@@ -70,19 +63,7 @@ Aim for suggestions that show you've really understood their personality and rel
         )
 
         # Parse and return the response
-        content = response.choices[0].message.content
-        if isinstance(content, str):
-            content = json.loads(content)
-        
-        # Validate response with Pydantic model
-        result = GiftSuggestion(**content)
-        return result.model_dump()
+        return response.choices[0].message.parsed
 
     except Exception as e:
-        # Fallback response in case of API error
-        return {
-            "summary": "Sorry, we encountered an error processing your request.",
-            "suggestions": [
-                "Please try again later.",
-            ]
-        }
+        raise e
