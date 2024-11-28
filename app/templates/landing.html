@@ -3,7 +3,10 @@
   <head>
     <title>santa</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta
       name="description"
       content="A thoughtful gift suggestion tool that helps you find the perfect present by analyzing your relationship and shared experiences"
@@ -25,22 +28,27 @@
         present by analyzing your relationship and shared experiences
       </p>
     </div>
-    
+
     <div id="loadingOverlay" class="loading-overlay" style="display: none">
       <div class="loading-spinner"></div>
       <p id="loadingText">Warming up the sleigh...</p>
     </div>
 
-    <form id="recipientForm" action="/questions" method="get" onsubmit="showLoading()">
+    <form
+      id="recipientForm"
+      action="/questions"
+      method="get"
+      onsubmit="showLoading()"
+    >
       <div class="recipient-input">
         <label for="recipient">Who are you getting a gift for?</label>
-        <input 
-          type="text" 
-          id="recipient" 
-          name="recipient" 
-          required 
+        <input
+          type="text"
+          id="recipient"
+          name="recipient"
+          required
           placeholder="e.g. partner, friend, mother, colleague..."
-        >
+        />
         <button type="submit" class="submit-button">
           Start Gift Journey 🎁
         </button>
@@ -111,18 +119,17 @@
     </style>
     <script>
       function showLoading() {
-        document.getElementById('loadingOverlay').style.display = 'flex';
+        document.getElementById("loadingOverlay").style.display = "flex";
 
         const steps = [
           "Crafting thoughtful questions...",
           "Consulting Santa's gift guides...",
-          "Preparing personalized prompts...",
           "Gathering gift wisdom...",
-          "Creating your gift journey..."
+          "Creating your gift journey...",
         ];
 
         let currentStep = 0;
-        const loadingText = document.getElementById('loadingText');
+        const loadingText = document.getElementById("loadingText");
 
         function updateStep() {
           loadingText.textContent = steps[currentStep];
