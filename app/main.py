@@ -61,13 +61,18 @@ async def questions(request: Request, recipient: str):
         session_data = SessionData()
         await backend.create(session_id, session_data)
 
-    questions_resp = create_questions(recipient)
-
+    # Generate questions if not in session or recipient changed
+    if not session_data.questions or session_data.recipient != recipient:
+        questions_resp = create_questions(recipient)
+        session_data.questions = jsonable_encoder(questions_resp.questions)
+        session_data.recipient = recipient
+        await backend.update(session_id, session_data)
+    
     response = templates.TemplateResponse(
         "questions.html",
         {
             "request": request,
-            "questions_data": jsonable_encoder(questions_resp.questions),
+            "questions_data": session_data.questions,
             "saved_answers": saved_answers,
             "saved_budget": saved_budget,
             "saved_step": saved_step,

@@ -8,6 +8,8 @@ class SessionData(BaseModel):
     answers: dict = {}
     budget: int | None = None
     current_step: int = 1
+    questions: list = []
+    recipient: str = ""
 
 cookie_params = CookieParameters()
 
