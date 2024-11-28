@@ -27,7 +27,7 @@
     </div>
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
       <div class="loading-spinner"></div>
-      <p>Analyzing your responses...</p>
+      <p id="loadingText">Feeding the reindeer...</p>
     </div>
     
     <form id="questionForm" action="/submit" method="post" onsubmit="showLoading()">
@@ -292,6 +292,31 @@
         document.querySelectorAll('textarea, input, button').forEach(el => {
           el.disabled = true;
         });
+
+        // Santa's workshop steps
+        const steps = [
+          "Feeding the reindeer...",
+          "Warming up the sleigh...",
+          "Drinking hot chocolate...",
+          "Checking the nice list...",
+          "Wrapping presents...",
+          "Polishing the bells...",
+          "Consulting the elves...",
+          "Reading your letter to Santa...",
+          "Making Christmas magic..."
+        ];
+
+        let currentStep = 0;
+        const loadingText = document.getElementById('loadingText');
+        
+        function updateStep() {
+          loadingText.textContent = steps[currentStep];
+          currentStep = (currentStep + 1) % steps.length;
+        }
+
+        // Update every 2 seconds
+        updateStep();
+        setInterval(updateStep, 2000);
       }
     </script>
     <style>
