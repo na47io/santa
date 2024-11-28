@@ -12,6 +12,8 @@ class SessionData(BaseModel):
     current_step: int = 1
     questions: list = []
     recipient: str = ""
+    summary: str | None = None
+    suggestions: list = []
 
 class SessionManager:
     def __init__(self, db: Session):

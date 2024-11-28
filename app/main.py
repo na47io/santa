@@ -157,17 +157,19 @@ async def view_results(
     if not session_data:
         return RedirectResponse(url="/")
 
-    result = process_answers(session_data.answers, session_data.budget)
-
-    # Clean up the session
-    await session_manager.delete_session(session_id)
+    # Only process answers if we haven't already
+    if not session_data.summary:
+        result = process_answers(session_data.answers, session_data.budget)
+        session_data.summary = result.summary
+        session_data.suggestions = result.suggestions
+        await session_manager.update_session(session_id, session_data)
 
     return templates.TemplateResponse(
         "results.html",
         {
             "request": request,
-            "summary": result.summary,
-            "suggestions": result.suggestions,
+            "summary": session_data.summary,
+            "suggestions": session_data.suggestions,
         },
     )
 
