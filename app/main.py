@@ -31,8 +31,9 @@ async def landing(request: Request):
 
 
 @app.get("/questions")
-async def questions(request: Request, recipient: str):
-    session_id = cookie(request)
+async def questions(
+    request: Request, recipient: str, session_id: UUID | None = Depends(cookie)
+):
     session_data = await backend.read(session_id)
 
     # Create new session if we don't have a valid one
@@ -130,8 +131,6 @@ async def submit_answers(request: Request, session_id: UUID | None = Depends(coo
     if not session_id:
         raise Exception("Session ID missing")
 
-    print(session_data)
-
     # Update only the changed fields
     session_data.answers = answers
     session_data.budget = budget
@@ -156,10 +155,9 @@ async def view_results(request: Request, session_id: UUID = Depends(cookie)):
     if not session_data:
         return RedirectResponse(url="/")
 
-    print(session_data)
     result = process_answers(session_data.answers, session_data.budget)
 
-    # Clear all form state from session
+    # TODO clear this in a good way in case we want to hold onto the cookie
     if session_id:
         # Create empty session data with default values
         empty_session = SessionData()
