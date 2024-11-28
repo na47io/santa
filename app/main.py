@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from fastapi.encoders import jsonable_encoder
 from pathlib import Path
 from uuid import UUID, uuid4
 from .session import SessionData, cookie, backend, verifier
@@ -66,7 +67,7 @@ async def questions(request: Request):
         "questions.html",
         {
             "request": request,
-            "questions_data": questions_resp.questions,
+            "questions_data": jsonable_encoder(questions_resp.questions),
             "saved_answers": saved_answers,
             "saved_budget": saved_budget,
             "saved_step": saved_step,
