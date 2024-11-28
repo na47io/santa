@@ -96,6 +96,9 @@ def process_answers(answers: dict, budget: int) -> dict:
    - Stay within the specified budget
    - Be specific with suggestions (brands, models, types)
    - Explain how each gift connects to their stated interests
+   - Include an appropriate emoji for each gift
+   - Categorize each gift appropriately
+   - Provide clear price ranges within budget
 
 Do not infer traits or interests that aren't directly supported by the answers. If insufficient information is provided, acknowledge this in your suggestions.""",
                 },
@@ -110,11 +113,17 @@ Analyze these responses and provide gift suggestions in this exact JSON format:
 {{
     "summary": "A brief 2-3 sentence analysis of the recipient's personality and interests",
     "suggestions": [
-        "4-5 specific gift ideas, each within the ${budget} budget"
+        {{
+            "emoji": "🎁",
+            "title": "Specific gift name/brand",
+            "description": "Detailed description explaining why this gift matches their interests",
+            "price_range": "Price range in USD",
+            "category": "Gift category (e.g., Electronics, Books, Experience, etc.)"
+        }}
     ]
 }}
 
-Make suggestions specific, actionable, and tied to the actual responses. Include price ranges.""",
+Provide 4-5 specific gift suggestions, each within the ${budget} budget. Make them actionable and tied to the actual responses.""",
                 },
             ],
             response_format=GiftSuggestion,

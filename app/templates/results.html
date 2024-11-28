@@ -24,10 +24,89 @@
     <div class="suggestions">
       {% for suggestion in suggestions %}
         <div class="suggestion">
-          <p>{{ suggestion }}</p>
+          <div class="suggestion-header">
+            <span class="emoji">{{ suggestion.emoji }}</span>
+            <h2 class="title">{{ suggestion.title }}</h2>
+            <span class="category">{{ suggestion.category }}</span>
+          </div>
+          <p class="description">{{ suggestion.description }}</p>
+          <div class="price-range">
+            Estimated Price: <span>{{ suggestion.price_range }}</span>
+          </div>
         </div>
       {% endfor %}
     </div>
-    <a href="/">Back to Questions</a>
+    <div class="navigation">
+      <a href="/" class="back-button">Start New Search 🎄</a>
+    </div>
+
+    <style>
+      .suggestions {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .suggestion {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .suggestion-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      
+      .emoji {
+        font-size: 2em;
+        margin-right: 15px;
+      }
+      
+      .title {
+        margin: 0;
+        flex-grow: 1;
+        color: #d42426;
+      }
+      
+      .category {
+        background: #f0f0f0;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.9em;
+      }
+      
+      .description {
+        margin: 15px 0;
+        line-height: 1.6;
+      }
+      
+      .price-range {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      
+      .navigation {
+        text-align: center;
+        margin: 30px 0;
+      }
+      
+      .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #d42426;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+      
+      .back-button:hover {
+        background: #b91d1f;
+      }
+    </style>
   </body>
 </html>

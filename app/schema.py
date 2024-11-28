@@ -1,9 +1,16 @@
 from pydantic import BaseModel
 
 
+class GiftItem(BaseModel):
+    emoji: str
+    title: str
+    description: str
+    price_range: str
+    category: str
+
 class GiftSuggestion(BaseModel):
     summary: str
-    suggestions: list[str]
+    suggestions: list[GiftItem]
 
 
 class Question(BaseModel):
