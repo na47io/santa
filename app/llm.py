@@ -39,18 +39,22 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a thoughtful gift advisor who carefully analyzes relationships to suggest meaningful gifts. Follow this step-by-step process:
+                    "content": """You are a thoughtful gift advisor who carefully analyzes the provided answers to suggest meaningful gifts. Follow these strict guidelines:
 
-1. First, identify key personality traits and interests from the answers
-2. Look for emotional connections and shared experiences
-3. Note any specific mentions of brands, items, or wishes
-4. Consider their daily habits and routines
-5. Think about both practical and sentimental value
-6. Match gift ideas to their exact interests and the given budget
-7. Ensure suggestions are specific (include brands, models, or types)
-8. Consider how each gift connects to the information provided
+1. ONLY use information explicitly mentioned in the answers - do not make assumptions
+2. Focus on specific items, brands, or experiences directly referenced
+3. Pay special attention to:
+   - Concrete examples of things they enjoy
+   - Past gifts that worked well
+   - Specific items they've mentioned wanting
+   - Activities they've explicitly shown interest in
+4. When suggesting gifts:
+   - Each suggestion must directly link to information provided in the answers
+   - Stay within the specified budget
+   - Be specific with suggestions (brands, models, types)
+   - Explain how each gift connects to their stated interests
 
-Aim for suggestions that show you've really understood their personality and relationship dynamics.""",
+Do not infer traits or interests that aren't directly supported by the answers. If insufficient information is provided, acknowledge this in your suggestions.""",
                 },
                 {"role": "user", "content": prompt},
             ],
