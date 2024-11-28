@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from pathlib import Path
 from uuid import UUID, uuid4
 from .session import SessionData, cookie, backend, verifier
-from .llm import process_answers
+from .llm import process_answers, create_questions
 
 app = FastAPI()
 
@@ -16,70 +16,6 @@ templates_path = Path(__file__).parent / "templates"
 
 app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 templates = Jinja2Templates(directory=str(templates_path))
-
-# Questions and their placeholders
-questions_data = [
-    {
-        "question": "What's the story of how you met, and what was the first gift you ever exchanged? How did they react to it?",
-        "placeholder": "We met at a coffee shop and I gave them a book they mentioned. Their eyes lit up when they saw it was a first edition...",
-    },
-    # {
-    #     "question": "Think about the music you share - what concert or artist would they drop everything to see live? Any specific memories attached to certain songs?",
-    #     "placeholder": "They're obsessed with Taylor Swift and we always sing 'All Too Well' together. They've never seen her live...",
-    # },
-    # {
-    #     "question": "When it comes to their interests, what hobby or activity makes them completely light up? What gear or tools are they constantly researching?",
-    #     "placeholder": "They're really into film photography lately and keep browsing vintage cameras online...",
-    # },
-    # {
-    #     "question": "Tell me about their workspace or creative space - what tools or items do they use daily? What do they wish they had to make their process better?",
-    #     "placeholder": "They work from home and always complain about their desk chair. They've mentioned wanting a standing desk...",
-    # },
-    # {
-    #     "question": "What's that one inside joke or shared experience that defines your relationship? How could that be translated into a tangible item?",
-    #     "placeholder": "We always joke about that time we got lost hiking and saw that weird purple mushroom...",
-    # },
-    # {
-    #     "question": "Think about their daily routines and habits - what's something they consistently enjoy or a problem they frequently mention wanting to solve?",
-    #     "placeholder": "They're always running late in the mornings and wish they had a better coffee setup at home...",
-    # },
-    # {
-    #     "question": "What's the most successful gift you've given them in the past? Why did it resonate so well?",
-    #     "placeholder": "The custom playlist I made them last year - they loved how personal it was and still listen to it...",
-    # },
-    # {
-    #     "question": "When you're hanging out together, what activities or experiences bring out their most genuine joy?",
-    #     "placeholder": "They're happiest when we're cooking together, especially trying new recipes...",
-    # },
-    # {
-    #     "question": "What's a skill or interest they've mentioned wanting to explore but haven't taken the plunge on yet?",
-    #     "placeholder": "They keep talking about wanting to learn to paint but haven't bought any supplies yet...",
-    # },
-    # {
-    #     "question": "Consider their style and aesthetic preferences - what brands or designs consistently catch their eye?",
-    #     "placeholder": "They love minimalist Scandinavian design and always stop to look at Marimekko patterns...",
-    # },
-    # {
-    #     "question": "What's a challenge or goal they're currently working towards? How could a gift support that journey?",
-    #     "placeholder": "They're training for their first marathon and need better gear for running in winter...",
-    # },
-    # {
-    #     "question": "Think about your shared memories - what location, activity, or experience holds special meaning for both of you?",
-    #     "placeholder": "That beach where we had our first date - we always talk about going back there...",
-    # },
-    # {
-    #     "question": "What's their relationship with technology? Are they early adopters, minimalists, or somewhere in between?",
-    #     "placeholder": "They love trying new gadgets but prefer ones that solve real problems rather than just being flashy...",
-    # },
-    # {
-    #     "question": "In your shared history, what's a moment they frequently reference or a story they love retelling?",
-    #     "placeholder": "They always talk about that time we spontaneously drove to that midnight movie premiere...",
-    # },
-    # {
-    #     "question": "What's their approach to self-care and relaxation? What helps them unwind after a long day?",
-    #     "placeholder": "They love taking long baths with fancy bath bombs and reading mystery novels...",
-    # },
-]
 
 
 @app.get("/up")
@@ -91,6 +27,7 @@ async def health_check():
 @app.get("/")
 async def landing(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
+
 
 @app.get("/questions")
 async def questions(request: Request):
@@ -123,11 +60,13 @@ async def questions(request: Request):
         session_data = SessionData()
         await backend.create(session_id, session_data)
 
+    questions_resp = create_questions("friend")
+
     response = templates.TemplateResponse(
-        "index.html",
+        "questions.html",
         {
             "request": request,
-            "questions_data": questions_data,
+            "questions_data": questions_resp.questions,
             "saved_answers": saved_answers,
             "saved_budget": saved_budget,
             "saved_step": saved_step,
