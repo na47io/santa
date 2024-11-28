@@ -41,7 +41,28 @@ Make suggestions specific, actionable, and tied to the actual responses. Include
             ],
             temperature=0.7,
             max_tokens=1000,
-            response_format={ "type": "json_object" }
+            response_format={
+                "type": "json_object",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "description": "A brief 2-3 sentence analysis of the recipient's personality and interests"
+                        },
+                        "suggestions": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "description": "A specific gift idea within the budget"
+                            },
+                            "minItems": 4,
+                            "maxItems": 5
+                        }
+                    },
+                    "required": ["summary", "suggestions"]
+                }
+            }
         )
         
         # Parse and return the response
