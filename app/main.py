@@ -128,15 +128,16 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
 @app.post("/submit")
 async def submit_answers(request: Request, session_id: UUID | None = Depends(cookie)):
     form_data = await request.form()
-
-    print(form_data)
+    
+    # Log the raw form data
+    print("Raw form data:", dict(form_data))
 
     # Extract answers and budget
     answers = {}
     budget = None
 
     for key, value in form_data.items():
-        print(key, value)
+        print(f"Processing form field - {key}: {value}")
         if key == "budget":
             budget = int(value)
         else:
