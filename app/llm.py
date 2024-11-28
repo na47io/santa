@@ -85,8 +85,17 @@ Aim for suggestions that show you've really understood their personality and rel
         )
 
         # Parse and return the response
-        return response.choices[0].message.content
+        result = response.choices[0].message.content
+        if isinstance(result, str):
+            import json
+            result = json.loads(result)
+        return result
 
     except Exception as e:
         # Fallback response in case of API error
-        raise e
+        return {
+            "summary": "Sorry, we encountered an error processing your request.",
+            "suggestions": [
+                "Please try again later.",
+            ]
+        }
