@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, Response, Cookie
+from fastapi import FastAPI, Request, Form, Depends, Response, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -173,6 +173,36 @@ async def view_results(
         },
     )
 
+
+@app.get("/debug/sessions")
+async def view_sessions(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """Debug endpoint to view all stored sessions"""
+    # Only allow in development
+    if not app.debug:
+        raise HTTPException(status_code=404)
+        
+    sessions = db.query(SessionStore).all()
+    session_data = []
+    
+    for session in sessions:
+        data = json.loads(session.data)
+        session_data.append({
+            "id": session.id,
+            "created_at": session.created_at,
+            "updated_at": session.updated_at,
+            "data": data
+        })
+    
+    return templates.TemplateResponse(
+        "debug_sessions.html",
+        {
+            "request": request,
+            "sessions": session_data
+        }
+    )
 
 if __name__ == "__main__":
     import uvicorn

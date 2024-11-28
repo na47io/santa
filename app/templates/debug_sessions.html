@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Debug - Stored Sessions</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      .sessions {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+      }
+      
+      .session {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .session-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .session-id {
+        font-family: monospace;
+        color: #666;
+      }
+      
+      .timestamps {
+        font-size: 0.9em;
+        color: #666;
+      }
+      
+      .session-data {
+        white-space: pre-wrap;
+        font-family: monospace;
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero-section">
+      <h1>Debug - Stored Sessions</h1>
+    </div>
+
+    <div class="sessions">
+      {% for session in sessions %}
+        <div class="session">
+          <div class="session-header">
+            <div class="session-id">ID: {{ session.id }}</div>
+            <div class="timestamps">
+              Created: {{ session.created_at.strftime('%Y-%m-%d %H:%M:%S') }}<br>
+              Updated: {{ session.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}
+            </div>
+          </div>
+          <div class="session-data">
+            {{ session.data | tojson(indent=2) }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
