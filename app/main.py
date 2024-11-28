@@ -7,6 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from pathlib import Path
 from uuid import UUID, uuid4
 from typing import Optional
+from sqlalchemy.orm import Session
 from .session import SessionData, SessionManager, attach_session_id, get_session_id
 from .database import get_db
 from .llm import process_answers, create_questions
