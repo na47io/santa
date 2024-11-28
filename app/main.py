@@ -32,17 +32,8 @@ async def landing(request: Request):
 
 @app.get("/questions")
 async def questions(request: Request, recipient: str):
-    # Try to get existing valid session
-    session_id = None
-    session_data = None
-
-    try:
-        existing_id = cookie(request)
-        session_data = await backend.read(existing_id)
-        if session_data:
-            session_id = existing_id
-    except:
-        pass
+    session_id = cookie(request)
+    session_data = await backend.read(session_id)
 
     # Create new session if we don't have a valid one
     if not session_id or not session_data:
@@ -96,15 +87,9 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
 
     # Get existing session or create new one
     if not session_id:
-        session_id = uuid4()
-        session_data = SessionData()
-    else:
-        try:
-            session_data = await backend.read(session_id)
-            if not session_data:
-                session_data = SessionData()
-        except:
-            session_data = SessionData()
+        raise Exception("Session ID missing")
+
+    session_data = await backend.read(session_id)
 
     # Update only the changed fields
     session_data.answers = answers
@@ -128,28 +113,24 @@ async def autosave(request: Request, session_id: UUID | None = Depends(cookie)):
 @app.post("/submit")
 async def submit_answers(request: Request, session_id: UUID | None = Depends(cookie)):
     form_data = await request.form()
-    
-    # Log the raw form data
-    print("Raw form data:", dict(form_data))
 
     # Extract answers and budget
     answers = {}
     budget = None
 
     for key, value in form_data.items():
-        print(f"Processing form field - {key}: {value}")
         if key == "budget":
             budget = int(value)
         else:
             answers[key] = value
 
+    session_data = await backend.read(session_id)
+
     # Get existing session or create new one
     if not session_id:
         raise Exception("Session ID missing")
-    else:
-        session_data = await backend.read(session_id)
-        if not session_data:
-            session_data = SessionData()
+
+    print(session_data)
 
     # Update only the changed fields
     session_data.answers = answers

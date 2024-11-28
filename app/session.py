@@ -4,12 +4,14 @@ from fastapi_sessions.session_verifier import SessionVerifier
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from pydantic import BaseModel
 
+
 class SessionData(BaseModel):
     answers: dict = {}
     budget: int | None = None
     current_step: int = 1
     questions: list = []
     recipient: str = ""
+
 
 cookie_params = CookieParameters()
 
@@ -23,6 +25,7 @@ cookie = SessionCookie(
 )
 
 backend = InMemoryBackend[UUID, SessionData]()
+
 
 class BasicVerifier(SessionVerifier[UUID, SessionData]):
     def __init__(
@@ -57,6 +60,7 @@ class BasicVerifier(SessionVerifier[UUID, SessionData]):
     def verify_session(self, model: SessionData) -> bool:
         """If the session exists, it is valid"""
         return True
+
 
 verifier = BasicVerifier(
     identifier="general_verifier",
